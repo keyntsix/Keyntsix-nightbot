@@ -14,7 +14,7 @@ const BOT_NAME = 'KEYNTSIX-V3';
 let pairingCodeShown = false;
 
 async function startBot() {
-    const { state, saveCreds } = await useMultiFileAuthState('session');
+    const { state, saveCreds } = await useMultiFileAuthState('session2');
     const { version } = await fetchLatestBaileysVersion();
 
     const sock = makeWASocket({
