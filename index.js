@@ -1,9 +1,17 @@
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason } = require('@whiskeysockets/baileys');
 const pino = require('pino');
+const http = require('http');
 
 const OWNER = '263789923176';
 const BOT_NAME = 'Keyntsi-nightbot';
 const PREFIX = '!';
+
+// FAKE SERVER YEKUTI RENDER ISAVHARA BOT
+const PORT = process.env.PORT || 3000;
+http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Keyntsi-nightbot iri online! ✨');
+}).listen(PORT, () => console.log('Server iri pa port ' + PORT));
 
 async function start() {
   const { version } = await fetchLatestBaileysVersion();
@@ -19,21 +27,16 @@ async function start() {
 
   sock.ev.on('creds.update', saveCreds);
 
-  // PAIR CODE - YAKAGADZIRISWA
   if (!sock.authState.creds.registered) {
-    // Mirira bot itange zvakanaka
     await new Promise(r => setTimeout(r, 3000));
     try {
       console.log('=== KEYNTSI-NIGHTBOT PAIRING ===');
-      console.log('Ndriku kumbira Pair Code...');
       const code = await sock.requestPairingCode(OWNER);
       console.log('PAIR CODE YAKO: ' + code);
       console.log('Enda ku WhatsApp > Linked Devices > Link with phone number');
     } catch (e) {
-      console.log('Pairing yakundikana, ndriku edza zvakare mumaseconds 10...');
+      console.log('Pairing yakundikana, ndriku edza zvakare...');
       console.log(e.message);
-      setTimeout(() => start(), 10000);
-      return;
     }
   }
 
@@ -43,7 +46,7 @@ async function start() {
     if (connection === 'close') {
       const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
       console.log('Connection yakavharwa, ndriku batanidza zvakare...');
-      if (shouldReconnect) start();
+      if (shouldReconnect) setTimeout(start, 5000);
     }
   });
 
